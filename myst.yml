@@ -6,11 +6,12 @@ project:
   # description:
   # keywords: []
   # authors: []
-  # github:
+  github: https://github.com/wolodyx/mlintro.git
   jupyter:
-    server:
-      url: http://localhost:8888/
-      token: 1234567890
+    lite: true
+    # server:
+    #   url: http://127.0.0.1:8889/
+    #   token: "1234567890"
   exclude:
     - README.md
   toc:
