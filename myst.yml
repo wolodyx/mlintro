@@ -1,0 +1,30 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: e810408a-c2ad-5223-9020-f3ab015a3132
+  title: Введение в машинное обучение
+  # description:
+  # keywords: []
+  # authors: []
+  # github:
+  exclude:
+    - README.md
+  toc:
+    - file: intro.md
+    - title: "Лекции"
+      children:
+        - file: src/intro-bigdata-ml.md
+        - file: src/python.md
+        - file: src/pandas.md
+        - file: src/preprocessing.md
+        - file: src/eda.md
+        - file: src/descriptive-stats.md
+        - file: src/hypotheses.md
+    - title: "Практика"
+      children:
+        - file: src/practice/python.ipynb
+site:
+  template: book-theme
+  # options:
+  #   favicon: favicon.ico
+  #   logo: site_logo.png
