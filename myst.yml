@@ -8,7 +8,6 @@ project:
   # authors: []
   # github:
   jupyter:
-    lite: true
     server:
       url: http://localhost:8888/
       token: 1234567890
