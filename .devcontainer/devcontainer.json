@@ -1,0 +1,27 @@
+{
+  "name": "ML Intro (Jupyter Book)",
+  "build": {
+    "context": "..",
+    "dockerfile": "../Dockerfile"
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/book,type=bind",
+  "workspaceFolder": "/book",
+  "overrideCommand": false,
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Jupyter Book",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ExecutableBookProject.myst-highlight"
+      ],
+      "settings": {
+        "files.eol": "\n"
+      }
+    }
+  }
+}

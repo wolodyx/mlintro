@@ -1,0 +1,11 @@
+services:
+  book:
+    build: .
+    image: mlintro-book
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/book
+    environment:
+      - HOST=0.0.0.0
+    command: jupyter-book start --port 3000 --keep-host
