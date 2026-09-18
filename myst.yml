@@ -27,6 +27,8 @@ project:
         - file: src/hypotheses.md
     - title: "Практика"
       children:
+        - file: src/setup.md
+        - file: src/practice/iris-classificate.ipynb
         - file: src/practice/python.ipynb
 site:
   template: book-theme

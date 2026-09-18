@@ -6,6 +6,7 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/book,type=bind",
   "workspaceFolder": "/book",
+  "remoteUser": "book",
   "overrideCommand": false,
   "forwardPorts": [3000],
   "portsAttributes": {
