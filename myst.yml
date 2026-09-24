@@ -15,11 +15,12 @@ project:
   exclude:
     - README.md
   toc:
-    - file: intro.md
+    - file: about.md
     - title: "Лекции"
       children:
-        - file: src/intro-bigdata-ml.md
-        - file: src/python.md
+        - file: src/intro.md
+        - file: src/setup.md
+        - file: src/python.ipynb
         - file: src/pandas.md
         - file: src/preprocessing.md
         - file: src/eda.md
@@ -27,9 +28,7 @@ project:
         - file: src/hypotheses.md
     - title: "Практика"
       children:
-        - file: src/setup.md
         - file: src/practice/iris-classificate.ipynb
-        - file: src/practice/python.ipynb
 site:
   template: book-theme
   # options:
