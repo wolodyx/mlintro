@@ -1,10 +1,6 @@
-# This file was created automatically with `jupyter-book init --gh-pages` 🪄 💚
-# Ensure your GitHub Pages settings for this repository are set to deploy with **GitHub Actions**.
-
 name: Jupyter Book (via myst) GitHub Pages Deploy
 on:
   push:
-    # Runs on pushes targeting the default branch
     branches: [main]
 env:
   # `BASE_URL` determines, relative to the root of the domain, the URL that your site is served from.
@@ -39,6 +35,8 @@ jobs:
         run: npm install -g jupyter-book
       - name: Build HTML Assets
         run: jupyter-book build --html
+      - name: Copy RevealJS presentations into site
+        run: cp -r presentations ./_build/html/presentations
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
