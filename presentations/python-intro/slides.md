@@ -6,22 +6,12 @@
 
 ---
 
-## Коллекции данных
-
-- список
-- кортеж
-- словарь
-- множество
+<img src="./excalidraw/python02.excalidraw.png" />
 
 ---
 
-## Обращение к данным
-
-- срезы `v[3:5]`
-- списковые включения `[x*x for x in range(10)]`
+<img src="./excalidraw/python03.excalidraw.png" />
 
 ---
 
-## Подключение модулей
-
-<!-- TODO: наполнить слайды -->
+<img src="./excalidraw/python04.excalidraw.png" />
