@@ -21,6 +21,7 @@ project:
         - file: src/intro.md
         - file: src/setup.md
         - file: src/python.ipynb
+        - file: src/numpy.md
         - file: src/pandas.md
         - file: src/preprocessing.md
         - file: src/eda.md
@@ -31,6 +32,7 @@ project:
         - file: src/practice/iris-classificate.ipynb
 site:
   template: book-theme
-  # options:
+  options:
   #   favicon: favicon.ico
-  #   logo: site_logo.png
+    logo: site_logo.png
+    logo_text: "Введение в машинное обучение"

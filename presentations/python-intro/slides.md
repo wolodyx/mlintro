@@ -10,8 +10,8 @@
 
 ---
 
-<img src="./excalidraw/python03.excalidraw.png" />
+<img src="./excalidraw/python04.excalidraw.png" />
 
 ---
 
-<img src="./excalidraw/python04.excalidraw.png" />
+<img src="./excalidraw/python03.excalidraw.png" />

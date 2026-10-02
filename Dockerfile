@@ -19,4 +19,4 @@ EXPOSE 3000
 
 USER book
 
-CMD ["jupyter-book", "start", "--port", "3000", "--keep-host"]
+CMD ["jupyter-book", "start", "--port", "3000", "--keep-host", "--execute"]
