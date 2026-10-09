@@ -19,14 +19,17 @@ project:
     - title: "Лекции"
       children:
         - file: src/intro.md
+        - file: src/tools.md
         - file: src/setup.md
         - file: src/python.ipynb
         - file: src/numpy.md
+        - file: src/matplotlib.md
         - file: src/pandas.md
         - file: src/preprocessing.md
         - file: src/eda.md
         - file: src/descriptive-stats.md
         - file: src/hypotheses.md
+        - file: src/termins.md
     - title: "Практика"
       children:
         - file: src/practice/iris-classificate.ipynb
