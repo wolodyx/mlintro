@@ -27,8 +27,8 @@ project:
     - file: src/eda.md
     - file: src/descriptive-stats.md
     - file: src/hypotheses.md
-    - file: src/termins.md
     - file: src/iris.md
+    - file: src/mnist.md
 site:
   template: book-theme
   options:
