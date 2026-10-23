@@ -287,7 +287,7 @@ print(plt.colormaps)
 ```{code-cell} python
 import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_openml
-bunch = fetch_openml('titanic', version=1, as_frame=True, parser='auto')
+bunch = fetch_openml('titanic', version=1, as_frame=True, parser='liac-arff')
 df = bunch.frame
 fig, ax = plt.subplots()
 ax.imshow(df.isnull().to_numpy(), aspect="auto", cmap="viridis", interpolation="nearest")
