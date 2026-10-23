@@ -34,7 +34,7 @@ jobs:
       - name: Install Jupyter Book (via myst)
         run: npm install -g jupyter-book
       - name: Build HTML Assets
-        run: jupyter-book build --html
+        run: jupyter-book build --html --execute
       - name: Copy RevealJS presentations into site
         run: cp -r presentations ./_build/html/presentations
       - name: Upload artifact

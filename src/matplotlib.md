@@ -1,10 +1,18 @@
+---
+jupytext:
+  text_representation:
+    format_name: myst
+kernelspec:
+  name: python3
+  display_name: Python 3
+---
+
+
 # Основы Matplotlib
 
 С визуализацией связан процесс исследования данных.
 Существует много инструментов визуализации данных, но Matplotlib -- это самый популярный из них.
 
-В примерах ниже импортирования Matplotlib будут пропускаться.
-Поэтому заранее сделайте это.
 Общепринято импортировать библиотеку с псевдонимом `plt`:
 ``` python
 import matplotlib.pyplot as plt
@@ -75,12 +83,11 @@ plt.show()
 В этом случае второй элемент в возвращаемом кортеже будет представлять список графиков.
 После оформления графиков функция [`matplotlib.pyplot.show()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html) отобразит их на экране.
 
-```python
+```{code-cell} python
+import matplotlib.pyplot as plt
 fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(9,5))
+plt.tight_layout()
 plt.show()
-```
-
-``` {figure} ./excalidraw/matplotlib-example1.png
 ```
 
 В последнем случае `ax` возвращается как двумерный массив Numpy объектов `Axes`.
@@ -157,7 +164,7 @@ plt.show()
 Если категорий много или их названия длинные, подписи стоит повернуть методом `Axes.set_xticklabels(..., rotation=45)`.
 Для сравнения нескольких рядов столбцы сдвигают вдоль оси X и уменьшают их ширину.
 
-```python
+```{code-cell} python
 categories = ["A", "B", "C", "D"]
 values = [12, 7, 15, 9]
 fig, ax = plt.subplots()
@@ -190,9 +197,8 @@ plt.show()
 Число бинов влияет на вид гистограммы: при слишком малом их количестве теряются детали, а при слишком большом появляется шум.
 Если выборки имеют разный объём, для сравнения формы распределений лучше задать `density=True`.
 
-```python
+```{code-cell} python
 import numpy as np
-
 rng = np.random.default_rng(42)
 data = rng.normal(loc=0, scale=1, size=1000)
 fig, ax = plt.subplots()
@@ -225,9 +231,8 @@ plt.show()
 В отличие от линейного графика, `scatter` не соединяет точки линиями и не зависит от порядка наблюдений.
 Если цвет точек кодирует третий признак, к графику добавляют цветовую шкалу через `Figure.colorbar`.
 
-```python
+```{code-cell} python
 import numpy as np
-
 rng = np.random.default_rng(42)
 x = rng.normal(size=200)
 y = 2 * x + rng.normal(scale=0.5, size=200)
@@ -258,10 +263,8 @@ Matplotlib предоставляет множество готовых цвет
 * `"Blues"` -- последовательная карта, нарастающая насыщенность одного цвета.
 
 Полный список доступных карт выводит команда `matplotlib.colormaps`.
-``` python
->>> print(plt.colormaps)
-ColormapRegistry; available colormaps:
-'magma', 'inferno', 'plasma', 'viridis', 'cividis', 'twilight', 'twilight_shifted', 'turbo', 'berlin', 'managua', 'vanimo', 'Blues', 'BrBG', 'BuGn', 'BuPu', 'CMRmap', 'GnBu', 'Greens', 'Greys', 'OrRd', 'Oranges', 'PRGn', 'PiYG', 'PuBu', 'PuBuGn', 'PuOr', 'PuRd', 'Purples', 'RdBu', 'RdGy', 'RdPu', 'RdYlBu', 'RdYlGn', 'Reds', 'Spectral', 'Wistia', 'YlGn', 'YlGnBu', 'YlOrBr', 'YlOrRd', 'afmhot', 'autumn', 'binary', 'bone', 'brg', 'bwr', 'cool', 'coolwarm', 'copper', 'cubehelix', 'flag', 'gist_earth', 'gist_gray', 'gist_heat', 'gist_ncar', 'gist_rainbow', 'gist_stern', 'gist_yarg', 'gnuplot', 'gnuplot2', 'gray', 'hot', 'hsv', 'jet', 'nipy_spectral', 'ocean', 'pink', 'prism', 'rainbow', 'seismic', 'spring', 'summer', 'terrain', 'winter', 'Accent', 'okabe_ito', 'Dark2', 'Paired', 'Pastel1', 'Pastel2', 'Set1', 'Set2', 'Set3', 'tab10', 'tab20', 'tab20b', 'tab20c', 'grey', 'gist_grey', 'gist_yerg', 'Grays', 'magma_r', 'inferno_r', 'plasma_r', 'viridis_r', 'cividis_r', 'twilight_r', 'twilight_shifted_r', 'turbo_r', 'berlin_r', 'managua_r', 'vanimo_r', 'Blues_r', 'BrBG_r', 'BuGn_r', 'BuPu_r', 'CMRmap_r', 'GnBu_r', 'Greens_r', 'Greys_r', 'OrRd_r', 'Oranges_r', 'PRGn_r', 'PiYG_r', 'PuBu_r', 'PuBuGn_r', 'PuOr_r', 'PuRd_r', 'Purples_r', 'RdBu_r', 'RdGy_r', 'RdPu_r', 'RdYlBu_r', 'RdYlGn_r', 'Reds_r', 'Spectral_r', 'Wistia_r', 'YlGn_r', 'YlGnBu_r', 'YlOrBr_r', 'YlOrRd_r', 'afmhot_r', 'autumn_r', 'binary_r', 'bone_r', 'brg_r', 'bwr_r', 'cool_r', 'coolwarm_r', 'copper_r', 'cubehelix_r', 'flag_r', 'gist_earth_r', 'gist_gray_r', 'gist_heat_r', 'gist_ncar_r', 'gist_rainbow_r', 'gist_stern_r', 'gist_yarg_r', 'gnuplot_r', 'gnuplot2_r', 'gray_r', 'hot_r', 'hsv_r', 'jet_r', 'nipy_spectral_r', 'ocean_r', 'pink_r', 'prism_r', 'rainbow_r', 'seismic_r', 'spring_r', 'summer_r', 'terrain_r', 'winter_r', 'Accent_r', 'okabe_ito_r', 'Dark2_r', 'Paired_r', 'Pastel1_r', 'Pastel2_r', 'Set1_r', 'Set2_r', 'Set3_r', 'tab10_r', 'tab20_r', 'tab20b_r', 'tab20c_r', 'grey_r', 'gist_grey_r', 'gist_yerg_r', 'Grays_r'
+``` {code-cell} python
+print(plt.colormaps)
 ```
 
 Чтобы понять, какое значение какому цвету соответствует, к тепловой карте добавляют **цветовую шкалу** (color bar).
@@ -275,21 +278,17 @@ ColormapRegistry; available colormaps:
 * `interpolation` -- строка со способом интерполяции между пикселями; `"nearest"` рисует соседние пиксели без сглаживания, что хорошо для категориальных данных, а `"bilinear"` -- сглаживает;
 * `vmin`, `vmax` -- минимальное и максимальное значение, которые соответствуют краям цветовой шкалы. Если их не задать, границы берутся из самих данных.
 
-```python
-fig, ax = plt.subplots(figsize=(8, 6))
-image = ax.imshow(matrix, cmap="coolwarm", aspect="auto")
-fig.colorbar(image, ax=ax, label="Значение")
-ax.set_xlabel("Признак")
-ax.set_ylabel("Признак")
-plt.show()
-```
 
 ### Визуализация пропусков в данных
 
 Одна из типичных задач при исследовании данных -- поиск пропусков.
 Значения `NaN` нельзя изобразить напрямую, поэтому сначала их превращают в булеву маску: `df.isnull()` возвращает таблицу той же формы, где `True` стоит на месте пропуска, а `False` -- на месте заполненной ячейки.
 Такая маска -- готовый двумерный массив для `imshow`, где два значения кодируются двумя цветами:
-``` {code} python
+```{code-cell} python
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_openml
+bunch = fetch_openml('titanic', version=1, as_frame=True)
+df = bunch.frame
 fig, ax = plt.subplots()
 ax.imshow(df.isnull().to_numpy(), aspect="auto", cmap="viridis", interpolation="nearest")
 ax.set_yticks([])
@@ -299,13 +298,11 @@ plt.tight_layout()
 plt.show()
 ```
 
-``` {figure} ./excalidraw/matplotlib-missingdata-titanic.png
-```
-
 Если данных мало, пропуски можно отобразить на обычной маске в оттенках серого и подписать все ячейки:
 
-``` python
+```{code-cell} python
 import numpy as np
+import matplotlib.pyplot as plt
 data = np.array([
     [1.0, 2.0, np.nan],
     [np.nan, 5.0, 6.0],
@@ -321,10 +318,8 @@ plt.show()
 
 Здесь карта `"gray_r"` раскрашивает пропуски чёрным на белом фоне: белые ячейки -- заполненные значения, чёрные -- пропуски.
 
-``` {figure} ./excalidraw/matplotlib-missingdata.png
-```
-
 
 ## Вопросы для самоконтроля
 
-1. 
+1. Какие типы графиков позволяет рисовать Matplotlib?
+2. Создайте рисунок с пятью графиками разных типов, рассмотренных в этом разделе.

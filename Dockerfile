@@ -4,6 +4,14 @@ ARG UID=1000
 ARG GID=1000
 
 RUN apk add --no-cache shadow \
+    python3 \
+    jupyter-server \
+    py3-ipykernel \
+    py3-numpy \
+    py3-pandas \
+    py3-scipy \
+    py3-matplotlib \
+    py3-scikit-learn \
  && npm install -g jupyter-book@2
 
 RUN deluser node 2>/dev/null || true \
