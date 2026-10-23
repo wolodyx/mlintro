@@ -96,3 +96,90 @@ sns.heatmap(corr, annot=True, cmap="coolwarm")
 - Сводные таблицы `pivot_table` выявляют зависимости между группами.
 - Гистограммы и boxplot показывают распределение и выбросы; `scatterplot` —
   связь переменных; `heatmap` — корреляции.
+
+```{code} python
+:linenos:
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
+
+
+# ---------- 1. Загрузка данных ----------
+df = pd.read_csv("~/mldata/titanic.csv")
+
+# ---------- 2. Текстовая сводка ----------
+def missing_report(df: pd.DataFrame) -> pd.DataFrame:
+    """Возвращает таблицу: тип, число непустых, число пропусков, доля, уникальных."""
+    rep = pd.DataFrame({
+        "dtype": df.dtypes.astype(str),
+        "non_null": df.notnull().sum(),
+        "missing": df.isnull().sum(),
+        "percent": (df.isnull().mean() * 100).round(2),
+        "unique": df.nunique()
+    })
+    return rep.sort_values("percent", ascending=False)
+
+
+report = missing_report(df)
+print(report)
+print("\nВсего строк:", len(df))
+print("Столбцов с пропусками:", (report["missing"] > 0).sum())
+
+
+# ---------- 3. Визуализация ----------
+miss_mask = df.isnull()                     # булев DataFrame: True = пропуск
+cols_with_na = miss_mask.columns[miss_mask.any()].tolist()
+missing_counts = miss_mask.sum().sort_values(ascending=False)
+missing_pct = (miss_mask.mean() * 100).sort_values(ascending=False)
+
+# Оставим для bar-панелей только столбцы, где пропуски реально есть
+counts_plot = missing_counts[missing_counts > 0]
+pct_plot = missing_pct[missing_pct > 0]
+
+fig = plt.figure(figsize=(16, 8))
+gs = fig.add_gridspec(2, 2, width_ratios=[3, 2], height_ratios=[1, 1])
+
+# --- Панель 1: карта пропусков (столбцы x строки) ---
+ax1 = fig.add_subplot(gs[:, 0])
+cmap = ListedColormap(["#2e7d32", "#c62828"])   # зелёный = есть данные, красный = пропуск
+ax1.imshow(
+    miss_mask.to_numpy(),
+    aspect="auto",
+    cmap=cmap,
+    interpolation="nearest",
+    vmin=0, vmax=1
+)
+ax1.set_xticks(range(df.shape[1]))
+ax1.set_xticklabels(df.columns, rotation=90)
+ax1.set_yticks([])
+ax1.set_title("Карта пропусков: строки × столбцы")
+ax1.legend(
+    handles=[Patch(color="#2e7d32", label="есть значение"),
+             Patch(color="#c62828", label="пропуск")],
+    loc="upper right", bbox_to_anchor=(1.0, 1.0), frameon=True
+)
+
+# --- Панель 2: доля пропусков по столбцам ---
+ax2 = fig.add_subplot(gs[0, 1])
+bars = ax2.barh(pct_plot.index[::-1], pct_plot.values[::-1], color="#c62828")
+ax2.set_xlabel("Доля пропусков, %")
+ax2.set_title("Доля пропусков по столбцам")
+ax2.set_xlim(0, 100)
+for bar, v in zip(bars, pct_plot.values[::-1]):
+    ax2.text(v + 1, bar.get_y() + bar.get_height() / 2,
+             f"{v:.1f}%", va="center", fontsize=9)
+
+# --- Панель 3: абсолютное число пропусков ---
+ax3 = fig.add_subplot(gs[1, 1])
+bars = ax3.barh(counts_plot.index[::-1], counts_plot.values[::-1], color="#5c6bc0")
+ax3.set_xlabel("Число пропусков, шт.")
+ax3.set_title("Абсолютное число пропусков")
+for bar, v in zip(bars, counts_plot.values[::-1]):
+    ax3.text(v + 3, bar.get_y() + bar.get_height() / 2,
+             f"{int(v)}", va="center", fontsize=9)
+
+plt.tight_layout()
+plt.show()
+```

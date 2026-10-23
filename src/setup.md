@@ -10,6 +10,13 @@ pip install -r requirements.txt
 jupyter notebook
 ```
 
+## Загрузка данных
+
+* [titanic](https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv)
+* [titanic3](https://raw.githubusercontent.com/amueller/scipy-2017-sklearn/091d371/notebooks/datasets/titanic3.csv)
+* ...
+
+
 ## Работа в Jupyter Notebook
 
 **Jupyter Notebook** -- интерактивная веб-среда, где код, результат выполнения, текст и графики живут в одном документе.
