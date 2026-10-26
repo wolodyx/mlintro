@@ -1,3 +1,12 @@
+---
+jupytext:
+  text_representation:
+    format_name: myst
+kernelspec:
+  name: python3
+  display_name: Python 3
+---
+
 # Распознавание рукописных цифр
 
 > Задача взята из книги О.Жерон "Прикладное машинное обучение с помощью Scikit-Learn и Tensorflow: концепции, инструменты и техники для создания интеллектуальных систем."
@@ -5,23 +14,24 @@
 
 ## Загружаем данные
 
-``` python
+``` {code-cell} python
 from sklearn.datasets import fetch_openml
 mnist = fetch_openml('mnist_784', version=1, as_frame=False)
+X, y = mnist.data, mnist.target
 ```
 
 
-``` python
-%matplotlib inline
-import matplotlib
+## Исследуем данные
+
+``` {code-cell} python
 import matplotlib.pyplot as plt
-some_digit = X[365]
+some_digit_index = 365
+some_digit = X[some_digit_index]
 some_digit_image = some_digit.reshape(28, 28)
 plt.imshow(some_digit_image, cmap = 'gray_r')
 ```
 
-``` python
-%matplotlib inline
+``` {code-cell} python
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -40,18 +50,14 @@ plt.tight_layout()
 plt.show()
 ```
 
-```{figure} ./excalidraw/mnist-digits.png
-```
-
 
 ## Готовим обучающий набор
 
-``` python
+``` {code-cell} python
 X_train, X_test, y_train, y_test = X[:60_000], X[60_000:], y[:60_000], y[60_000:]
 ```
 
-``` python
-import numpy as np
+``` {code-cell} python
 shuffle_index = np.random.permutation(60_000)
 X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
 ```
