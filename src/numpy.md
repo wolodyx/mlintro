@@ -245,21 +245,6 @@ print(np.diag([10, 20, 30]))             # диагональная из век�
 print(np.fromfunction(lambda i, j: i + j, (3, 3), dtype=int))
 ```
 
-``` python
-```
-
-``` python
-```
-
-``` python
-```
-
-``` python
-```
-
-``` python
-```
-
 
 <!--
 **линеаризация**
@@ -270,34 +255,163 @@ print(np.fromfunction(lambda i, j: i + j, (3, 3), dtype=int))
 Индексирование, вырезание, индексирование срезами, индексирование булевыми признаками, прихотливое индексирование.
 
 
-## Операции между массивами и скалярами
+## Остальные возможности
+
+* Операции между массивами и скалярами
+* Транспонирование и перестановка осей
+* Операции над элементами
+* Унарные и бинарные универсальные функции.
+* Логические операции над массивами
+* Математические и статистические операции
+* Теоретико-множественные операции
+* Файловый ввод-вывод
+* Функции линейное алгебры
 
 
-## Транспонирование и перестановка осей
+## Примеры решаемых задач
 
-## Операции над элементами
-Унарные и бинарные универсальные функции.
+### Аддитивный и импульсный шумы в изображениях
 
-## Логические операции над массивами
+В этой задаче мы добавим аддитивный и импульный шумы в изображение из [набора данных MNIST](./datasets.md#mnist).
+С помощью шума случайно исказим некоторые значения пикселей изображения.
+Зашумленные изображения помогут в дальнейшем проверить устойчивость модели к искажениям, расширить (аугментировать) обучающий набор новыми данными или обучить модель восстанавливать изображение.
 
-## Математические и статистические операции
+Поскольку шум случаен, для его получения воспользуемся [генератором псевдослучайных](https://numpy.org/doc/stable/reference/random/generator.html) чисел из Numpy.
+Функция [`numpy.random.default_rng`](https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng) возвращает объект `Generator`, методы которого и будут генерировать числа.
+Аргумент `seed` задает начальное состояние генератора, называемого также **затравкой**.
+При одном и том же значении затравки последовательность случайных чисел будет повторяться для каждого запуска сценария, что позволит каждый раз получать один и тот же результат.
 
-## Теоретико-множественные операции
+``` python
+import numpy as np
+rng = np.random.default_rng(seed=0)
+```
 
-## Файловый ввод-вывод
+У генератора `rng` есть методы для получения чисел из разных распределений:
+* [`normal`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.normal.html) -- нормальное (гауссово) распределение;
+* [`uniform`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.uniform.html) -- вещественные числа, равномерно распределенные в заданном интервале;
+* [`integers`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.integers.html) -- целые числа, равномерно распределенные в заданном интервале;
+* [`random`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.random.html) -- вещественные числа, равномерно распределенные в интервале `[0, 1)`.
 
-## Функции линейное алгебры
+``` {note}
+В ранних версиях Numpy для генерации псевдослучайных чисел использовали глобальные функции [`numpy.random.normal`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html), [`np.random.seed`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.seed.html) и другие.
+Но для нового кода рекомендуется использовать объектный интерфейс и функцию [`np.random.default_rng`](https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng).
+```
 
-## Вопросы для самоконтроля
+Загрузим набор рукописных цифр MNIST и выберем одно изображение.
+Каждое изображение в MNIST хранится как вектор из `28 * 28 = 784` чисел, поэтому его нужно привести к форме `(28, 28)`.
+Значения пикселей в исходном изображении лежат в диапазоне от 0 до 255 типа `int64`.
+Для добавления шума удобно перевести массив в вещественный тип, иначе дробные значения будут отброшены при записи в целочисленный массив.
+
+```{code-cell} python
+from sklearn.datasets import fetch_openml
+mnist = fetch_openml('mnist_784', version=1, as_frame=False)
+X, y = mnist.data, mnist.target
+
+image_index = 0
+image = X[image_index].reshape(28, 28).astype(np.float64)
+
+print(f"Форма изображения: {image.shape}")
+print(f"Диапазон значений: {image.min()}..{image.max()}")
+print(f"Метка класса: {y[image_index]}")
+```
+
+Отобразим изображение средствами Matplotlib.
+Разбор кода визуализации показан [здесь](./matplotlib.md#draw-image).
+```{code-cell} python
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.imshow(image, cmap='gray_r')
+ax.set_title(f"Исходная цифра {y[0]}")
+ax.axis('off')
+plt.show()
+```
+
+При аддитивном (или гауссовом) шуме яркость каждого пикселя отклоняется от истинной случайным образом (на величину $\varepsilon$) по закону нормального распределения с нулевым средним и стандартным отклонением $\sigma$.
+Параметр $\sigma$ управляет силой шума: чем он больше, тем сильнее искажается изображение.
+После сложения значения могут выйти за пределы допустимого диапазона, поэтому их ограничивают функцией [`numpy.clip`]().
+$$
+I_{\text{noisy}} = \operatorname{clip}(I + \varepsilon,\ 0,\ 255),
+\qquad
+\varepsilon \sim \mathcal{N}(0, \sigma^2).
+$$
+
+```{code-cell} python
+def add_gaussian_noise(image, sigma, rng):
+    noise = rng.normal(loc=0.0, scale=sigma, size=image.shape)
+    noisy = np.clip(image + noise, 0, 255)
+    return noisy.astype(np.uint8)
+```
+
+Сравним исходное изображение с зашумленными при разных значениях $\sigma$.
+Для каждого уровня шума создаем отдельный генератор с одной и той же затравкой, чтобы результаты можно было воспроизвести.
+```{code-cell} python
+sigmas = [10, 30, 60]
+fig, axes = plt.subplots(ncols=len(sigmas)+1)
+
+axes[0].imshow(image, cmap='gray_r')
+axes[0].set_title("Исходное")
+
+for ax, sigma in zip(axes[1:], sigmas):
+    rng = np.random.default_rng(seed=0)
+    noisy = add_gaussian_noise(image, sigma, rng)
+    ax.imshow(noisy, cmap='gray_r')
+    ax.set_title(f"σ = {sigma}")
+
+for ax in axes:
+    ax.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+При импульсном шуме случайные пиксели внезапно меняют свою яркость или цвет, превращаясь в хаотично разбросанные по кадру белые или черные точки.
+Следующий код ниже заменяет отдельные пиксели на черные (0) или белые (255).
+Доля измененных пикселей задается параметром `amount`.
+Для выбора пикселей используем матрицу равномерно распределенных случайных чисел из интервала `[0, 1)`, генерируемого методом [`random`]().
+Пиксели со значением меньше `amount/2` делаем черными, а больше `1-amount/2` -- белыми.
+```{code-cell} python
+def add_impulse_noise(image, amount, rng):
+    noisy = image.copy()
+    mask = rng.random(image.shape)
+    noisy[mask < amount / 2] = 0
+    noisy[mask > 1 - amount / 2] = 255
+    return noisy.astype(np.uint8)
+```
+
+Воспользуемся созданной функцией выше и зашумим исходное изображение тремя разными значениями `amount`:
+```{code-cell} python
+amounts = [0.01, 0.05, 0.15]
+fig, axes = plt.subplots(ncols=len(amounts)+1)
+
+axes[0].imshow(image, cmap='gray_r', vmin=0, vmax=255)
+axes[0].set_title("Исходное")
+
+for ax, amount in zip(axes[1:], amounts):
+    rng = np.random.default_rng(seed=0)
+    noisy = add_impulse_noise(image, amount, rng)
+    ax.imshow(noisy, cmap='gray_r', vmin=0, vmax=255)
+    ax.set_title(f"amount = {amount}")
+
+for ax in axes:
+    ax.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+
+## Вопросы и упражнения
 
 1. Почему библиотеку NumPy импортируют, используя псевдоним `np`?
 1. Что такое *векторизация*?
-
-
-## Упражнения
-
+1. Где и для чего в Numpy используют затравку?
 1. В программе выше производительность обработки массива чисел в NumPy сравнивали относительно выражения со списковым включением.
   Попробуйте сравнить с невекторизированной формой обработки данных в массиве NumPy.
+1. Какие причины могут быть в том, чтобы зашумить изображения в наборе данных?
+1. Измените зашумляющий изображение код так, чтобы он обрабатывал изображения предварительно нормированные к диапазону `[0.0, 1.0]`.
+1. Измените зашумляющий изображение код так, чтобы исходным изображением стал белый фон, а на выходе остался только шум.
+
 
 ## Полезные ссылки
 

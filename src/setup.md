@@ -15,32 +15,3 @@ jupyter notebook
 * [titanic](https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv)
 * [titanic3](https://raw.githubusercontent.com/amueller/scipy-2017-sklearn/091d371/notebooks/datasets/titanic3.csv)
 * ...
-
-
-## Работа в Jupyter Notebook
-
-**Jupyter Notebook** -- интерактивная веб-среда, где код, результат выполнения, текст и графики живут в одном документе.
-
-Преимущества:
-
-- **интерактивность** -- выполнение ячеек по отдельности, немедленный вывод;
-- **наглядность** -- графики и таблицы встраиваются рядом с кодом;
-- **документирование** -- Markdown-разметка для пояснений и формул;
-- **воспроизводимость** -- ноутбук как единый артефакт анализа.
-
-Основные элементы интерфейса:
-
-- **ячейки кода** (`code`) -- исполняемый Python-код;
-- **ячейки разметки** (`markdown`) -- пояснения, заголовки, формулы;
-- **kernel** -- процесс Python, хранящий состояние переменных между ячейками.
-
-```python
-# пример ячейки кода в Jupyter
-import pandas as pd
-
-df = pd.DataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
-df.head()
-```
-
-Запуск: `jupyter notebook` (классический интерфейс) или
-`jupyter lab` (современный интерфейс).

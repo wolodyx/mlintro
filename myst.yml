@@ -19,6 +19,8 @@ project:
     - file: src/intro.md
     - file: src/tools.md
     - file: src/setup.md
+    - file: src/jupyter-notebook.md
+    - file: src/datasets.md
     - file: src/python.md
     - file: src/numpy.md
     - file: src/matplotlib.md
