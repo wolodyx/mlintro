@@ -18,6 +18,13 @@ NumPy -- это популярная библиотека Python с открыт
 Именно поэтому важно понимать основы и уметь пользоваться NumPy.
 Понимание принципов, заложенных в NumPy, не пропадут зря, и помогут при освоении Pandas.
 
+Загрузим данные для прохождения сценариев ниже:
+```{code-cell} python
+from sklearn.datasets import fetch_openml
+mnist = fetch_openml('mnist_784', version=1, as_frame=False, parser='liac-arff')
+```
+
+
 ## Эффективность операций NumPy
 
 Сравним скорость выполнения операций над одним миллионом целых чисел в классическом списке Python и одномерном массиве NumPy следующей программой.
@@ -25,14 +32,12 @@ NumPy -- это популярная библиотека Python с открыт
 
 ```` {note}
 Общепринято импортировать модуль NumPy с псевдонимом:
-``` python
+```{code-cell} python
 import numpy as np
 ```
 ````
 
 ```{code-cell} python
-import numpy as np
-
 N = 1_000_000
 
 py_list = list(range(N))
@@ -200,48 +205,102 @@ NumPy предлагает быстрые операции, лаконичные
 
 ## Создание массивов
 
-Функции numpy, создающие массивы `ndarray` называют **конструкторами массива**.
-Существуют следующие функции:
-* `array`;
-* `zeros`, `ones`, `full`, `empty`;
-* `{zeros,ones,empty,full}_like`;
-* `arange`, `linspace`;
-* `identity`, `eye`;
+Функции NumPy, создающие массивы `ndarray`, называют **конструкторами массива**.
+В зависимости от способа задания данных конструкторы объединяют в несколько групп:
+* создание из готовых данных -- [`numpy.array`](https://numpy.org/doc/stable/reference/generated/numpy.array.html);
+* заполнение массива заданной формы постоянным значением -- [`numpy.zeros`](https://numpy.org/doc/stable/reference/generated/numpy.zeros.html), [`numpy.ones`](https://numpy.org/doc/stable/reference/generated/numpy.ones.html), [`numpy.full`](https://numpy.org/doc/stable/reference/generated/numpy.full.html), [`numpy.empty`](https://numpy.org/doc/stable/reference/generated/numpy.empty.html);
+* создание массива той же формы, что и другой массив, -- `numpy.zeros_like`, `numpy.ones_like`, `numpy.full_like`, `numpy.empty_like`;
+* генерация последовательностей -- [`numpy.arange`](https://numpy.org/doc/stable/reference/generated/numpy.arange.html), [`numpy.linspace`](https://numpy.org/doc/stable/reference/generated/numpy.linspace.html);
+* специальные матрицы -- [`numpy.identity`](https://numpy.org/doc/stable/reference/generated/numpy.identity.html), [`numpy.eye`](https://numpy.org/doc/stable/reference/generated/numpy.eye.html), [`numpy.diag`](https://numpy.org/doc/stable/reference/generated/numpy.diag.html);
+* вычисление элементов по их индексам -- [`numpy.fromfunction`](https://numpy.org/doc/stable/reference/generated/numpy.fromfunction.html).
+
 <!--
 * `ndarray.astype`;
 * генерация случайных чисел;
 -->
 
-``` python
-arr = np.array([1,2,3])
-arr = np.array([[1,2,3],[4,5,6]])
-arr = np.array([1,2,3], dtype = np.float64)
+### Из готовых данных
+
+Функция [`numpy.array`](https://numpy.org/doc/stable/reference/generated/numpy.array.html) создает массив из списка, кортежа или другой последовательности.
+Вложенные списки задают многомерный массив, а параметр `dtype` -- тип элементов.
+Если тип не указан, NumPy определяет его по значениям автоматически.
+
+```{code-cell} python
+arr = np.array([1, 2, 3])
+print(arr, arr.dtype)
+
+matrix = np.array([[1, 2, 3], [4, 5, 6]])
+print(matrix)
+print("форма:", matrix.shape)
+
+real = np.array([1, 2, 3], dtype=np.float64)
+print(real, real.dtype)
 ```
 
-``` python
-arr = np.zeros((2, 3))            # все нули, float64 по умолчанию
-arr = np.ones((2, 3), dtype=int)  # все единицы, целые
-arr = np.full((2, 3), 7)          # заполнить константой 7
-arr = np.empty((2, 3))            # БЕЗ инициализации — мусор в памяти
+### Заполненные массивы
+
+Конструкторы `zeros`, `ones`, `full` и `empty` принимают форму будущего массива в виде кортежа.
+По умолчанию создаются массивы вещественного типа `float64`, но тип можно задать параметром `dtype`.
+
+```{code-cell} python
+print(np.zeros((2, 3)))            # все нули
+print(np.ones((2, 3), dtype=int))  # все единицы, целые
+print(np.full((2, 3), 7))          # заполнить константой 7
+
+empty = np.empty((2, 3))           # без инициализации
+print(empty.shape, empty.dtype)
 ```
 
-``` python
-np.zeros_like(arr)
-np.ones_like(arr)
-np.full_like(arr, 5)
+```` {warning}
+[`numpy.empty`](https://numpy.org/doc/stable/reference/generated/numpy.empty.html) не заполняет память, а только выделяет ее.
+В массиве окажутся произвольные значения, оставшиеся от предыдущих вычислений, поэтому его нужно заполнить перед использованием.
+````
+
+### Массив той же формы
+
+Конструкторы с суффиксом `_like` создают массив, форма и тип которого совпадают с уже существующим массивом.
+Это удобно, когда не хочется вручную повторять его форму.
+
+```{code-cell} python
+arr = np.array([[1, 2, 3], [4, 5, 6]])
+print(np.zeros_like(arr))
+print(np.ones_like(arr))
+print(np.full_like(arr, 5))
 ```
 
-``` python
+### Последовательности чисел
+
+Функция [`numpy.arange`](https://numpy.org/doc/stable/reference/generated/numpy.arange.html) работает как встроенная функция `range`: она принимает начало, конец и шаг, причем конец в последовательность не включается.
+Функция [`numpy.linspace`](https://numpy.org/doc/stable/reference/generated/numpy.linspace.html) принимает начало, конец и количество точек, причем оба конца включаются в результат.
+
+```{code-cell} python
 print(np.arange(0, 10, 2))        # шаг 2, до 10 не включая
 print(np.arange(0, 1, 0.25))      # дробный шаг
 print(np.linspace(0, 1, 5))       # 5 точек от 0 до 1 включительно
 ```
 
-``` python
-print(np.eye(3))                         # единичная 3x3
-print(np.diag([10, 20, 30]))             # диагональная из вектора
+```` {note}
+При дробном шаге `numpy.arange` может накапливать ошибку округления, и количество элементов окажется неожиданным.
+Когда важно точное число точек на заданном интервале, предпочитают `numpy.linspace`.
+````
 
-# fromfunction: значение = f(индексы). Здесь — таблица сложения
+### Специальные матрицы
+
+Функция [`numpy.eye`](https://numpy.org/doc/stable/reference/generated/numpy.eye.html) возвращает единичную матрицу -- квадратную матрицу с единицами на главной диагонали и нулями в остальных ячейках.
+Функция [`numpy.identity`](https://numpy.org/doc/stable/reference/generated/numpy.identity.html) делает то же самое, но задает только размер.
+Функция [`numpy.diag`](https://numpy.org/doc/stable/reference/generated/numpy.diag.html) строит матрицу с заданной главной диагональю.
+
+```{code-cell} python
+print(np.eye(3))                         # единичная 3x3
+print(np.identity(3, dtype=int))         # то же самое, целыми числами
+print(np.diag([10, 20, 30]))             # диагональная из вектора
+```
+
+Функция [`numpy.fromfunction`](https://numpy.org/doc/stable/reference/generated/numpy.fromfunction.html) вычисляет каждый элемент по его индексам.
+Она принимает функцию от индексов и форму массива, а затем вызывает функцию для всех наборов индексов.
+В примере ниже получается таблица сложения номеров строки и столбца:
+
+```{code-cell} python
 print(np.fromfunction(lambda i, j: i + j, (3, 3), dtype=int))
 ```
 
@@ -252,7 +311,206 @@ print(np.fromfunction(lambda i, j: i + j, (3, 3), dtype=int))
 
 ## Доступ к элементам массива
 
-Индексирование, вырезание, индексирование срезами, индексирование булевыми признаками, прихотливое индексирование.
+Элементы массива `ndarray` извлекают по индексам, заключенным в квадратные скобки.
+Способы доступа делят на четыре группы:
+* **индексирование** -- доступ к одному элементу по его номеру;
+* **срезы** -- доступ к непрерывному участку массива;
+* **булево индексирование** -- выбор элементов по условию;
+* **прихотливое индексирование** -- выбор по массиву номеров.
+
+Индексация начинается с нуля.
+Отрицательный индекс отсчитывает элементы с конца, поэтому `-1` -- последний элемент.
+Обращение за границы массива вызывает исключение `IndexError`.
+
+### Отдельные элементы
+
+Одномерный массив индексируют одним числом:
+
+```{code-cell} python
+arr = np.array([10, 20, 30, 40, 50])
+
+print(arr[0])    # первый элемент
+print(arr[2])    # третий элемент
+print(arr[-1])   # последний элемент
+print(arr[-2])   # предпоследний элемент
+```
+
+В многомерном массиве индекс задают числом для каждой оси.
+Индексы перечисляют через запятую внутри одной пары скобок:
+
+```{code-cell} python
+matrix = np.array([[1, 2, 3],
+                   [4, 5, 6],
+                   [7, 8, 9]])
+
+print(matrix[0, 0])    # строка 0, столбец 0
+print(matrix[1, 2])    # строка 1, столбец 2
+print(matrix[-1, -1])  # последний элемент
+```
+
+Первый индекс выбирает строку, второй -- столбец.
+Запись `matrix[1][2]` вернет тот же элемент, но сначала создаст промежуточный массив-строку, поэтому форма с запятой предпочтительнее.
+
+### Меньше индексов, чем измерений
+
+Если указать индексов меньше, чем у массива измерений, NumPy фиксирует первые оси и возвращает оставшуюся часть.
+Размерность результата уменьшается на число указанных индексов.
+Например, для двумерного массива один индекс возвращает строку:
+
+```{code-cell} python
+print(matrix[1])         # одна ось зафиксирована, результат -- строка
+print(matrix[1].shape)   # (3,)
+```
+
+В трехмерном массиве один индекс возвращает двумерный срез, а два индекса -- одномерную строку:
+
+```{code-cell} python
+cube = np.arange(24).reshape(2, 3, 4)
+print(cube.shape)         # (2, 3, 4)
+
+print(cube[0].shape)      # (3, 4) -- зафиксирована первая ось
+print(cube[0, 1].shape)   # (4,)   -- зафиксированы две оси
+```
+
+Если указаны все индексы, возвращается скаляр, то есть массив нулевой размерности:
+
+```{code-cell} python
+print(cube[0, 1, 2])
+print(np.ndim(cube[0, 1, 2]))
+```
+
+### Срезы
+
+Срез задает начало, конец и шаг в форме `начало:конец:шаг`.
+Конец в результат не включается, а пропущенные значения заменяются значениями по умолчанию: начало -- `0`, конец -- длина массива, шаг -- `1`.
+
+```{code-cell} python
+arr = np.array([10, 20, 30, 40, 50])
+
+print(arr[1:4])    # индексы 1, 2, 3
+print(arr[:3])     # от начала до индекса 3
+print(arr[2:])     # от индекса 2 до конца
+print(arr[::2])    # каждый второй элемент
+print(arr[::-1])   # все элементы в обратном порядке
+```
+
+Для многомерного массива срез задают отдельно по каждой оси.
+Двоеточие без границ означает "все элементы вдоль этой оси":
+
+```{code-cell} python
+print(matrix[0])          # первая строка
+print(matrix[:, 1])       # второй столбец
+print(matrix[0:2, 1:])    # строки 0-1, столбцы 1-2
+```
+
+```` {note}
+Срез не копирует данные, а создает **представление** -- новый массив, который ссылается на те же ячейки памяти.
+Поэтому изменение элементов через срез меняет исходный массив:
+```{code-cell} python
+base = np.arange(5)
+view = base[1:3]
+view[0] = 99
+print(base)
+```
+Чтобы получить независимую копию, вызывают метод `copy`:
+```{code-cell} python
+base = np.arange(5)
+independent = base[1:3].copy()
+independent[0] = 99
+print(base)
+print(independent)
+```
+````
+
+### Булево индексирование
+
+Сравнение массива с числом выполняется поэлементно и возвращает булев массив той же формы.
+Такой массив называют **маской**: он содержит `True` на местах, где условие выполнено.
+
+```{code-cell} python
+arr = np.array([10, 20, 30, 40, 50])
+
+mask = arr > 25
+print(mask)
+print(arr[mask])
+```
+
+Если передать маску как индекс, NumPy вернет только те элементы, для которых она равна `True`.
+Обычно маску записывают прямо в скобках:
+
+```{code-cell} python
+print(arr[arr > 25])
+```
+
+Несколько условий объединяют операторами `&` (и), `|` (или) и `~` (не).
+Каждое сравнение при этом заключается в скобки, потому что приоритет этих операторов выше приоритета сравнений.
+Обычные `and`, `or` и `not` для массивов не подходят, так как они работают со всем объектом целиком, а не поэлементно.
+
+```{code-cell} python
+print(arr[(arr > 15) & (arr < 45)])
+print(arr[(arr < 15) | (arr > 45)])
+print(arr[~(arr > 25)])
+```
+
+По маске можно не только выбирать, но и присваивать значения:
+
+```{code-cell} python
+arr[arr > 25] = 0
+print(arr)
+```
+
+Для многомерного массива маска имеет ту же форму, что и массив.
+Результат выбора получается одномерным, потому что выбранные элементы выстраиваются в строку:
+
+```{code-cell} python
+matrix = np.array([[1, 2, 3],
+                   [4, 5, 6],
+                   [7, 8, 9]])
+
+print(matrix[matrix % 2 == 0])
+```
+
+Функция [`numpy.where`](https://numpy.org/doc/stable/reference/generated/numpy.where.html) позволяет заменить элементы по условию, сохранив форму массива.
+Она принимает условие, значение для истинных элементов и значение для ложных:
+
+```{code-cell} python
+print(np.where(matrix % 2 == 0, matrix, 0))
+```
+
+### Прихотливое индексирование
+
+**Прихотливое** (от англ. *fancy*) индексирование -- это выбор элементов по списку или массиву номеров.
+В отличие от среза, номера могут идти в произвольном порядке и повторяться:
+
+```{code-cell} python
+arr = np.array([10, 20, 30, 40, 50])
+
+print(arr[[0, 2, 4]])       # элементы с номерами 0, 2, 4
+print(arr[[4, 0, 0, 1]])    # номера могут повторяться
+```
+
+Длина результата равна длине списка индексов, поэтому один элемент можно выбрать несколько раз.
+Для многомерного массива списки номеров можно задавать по каждой оси:
+
+```{code-cell} python
+print(matrix[[0, 2]])                 # первая и третья строки
+print(matrix[:, [0, 2]])              # первый и третий столбцы
+print(matrix[[0, 1, 2], [0, 1, 2]])   # диагональные элементы
+```
+
+В последнем примере индексы объединяются в пары: первый элемент берется из строки `0` и столбца `0`, второй -- из строки `1` и столбца `1` и так далее.
+
+Через прихотливое индексирование удобно присваивать значения сразу нескольким элементам:
+
+```{code-cell} python
+arr[[0, 2]] = 100
+print(arr)
+```
+
+```` {note}
+Прихотливое индексирование, в отличие от среза, всегда возвращает копию, а не представление.
+Изменение результата не затрагивает исходный массив.
+````
 
 
 ## Остальные возможности
@@ -326,10 +584,10 @@ print(np.array_equal(np.sort(shuffled), y))
 Этот прием используют, чтобы согласованно перемешать несколько массивов.
 Если нужно перемешать признаки `X` и метки `y`, нельзя перемешивать их независимо, иначе нарушится соответствие между строками.
 Сначала получают перестановку индексов, а затем применяют ее к обоим массивам:
-```python
+```{code-cell} python
 rng = np.random.default_rng(0)
-idx = rng.permutation(len(X))
-X_shuffled, y_shuffled = X[idx], y[idx]
+idx = rng.permutation(len(mnist.data))
+X_shuffled, y_shuffled = mnist.data[idx], mnist.target[idx]
 ```
 
 Иногда нужно перемешать только часть массива, оставив остальную без изменений.
@@ -368,8 +626,6 @@ print(partial.shape)
 Функция [`numpy.all`](https://numpy.org/doc/stable/reference/generated/numpy.all.html) вернет `True`, только если все сравнения истинны:
 
 ```{code-cell} python
-import numpy as np
-
 arr = np.array([1, 2, 2, 5, 8])
 print(arr[:-1] <= arr[1:])
 print(np.all(arr[:-1] <= arr[1:]))
@@ -423,6 +679,62 @@ print("без NaN:", np.all(clean[:-1] <= clean[1:]))
 ```
 ````
 
+### 3d-массив, в каждом слое свое число
+
+Разберем следующий код, который генерирует трехмерный массив размерностью `(4,3,2)`, в котором каждый слой инициализирован со своим индексом:
+```{code-cell} python
+shape = (4, 3, 2)
+arr = np.arange(shape[0])[:, None, None] * np.ones(shape[1:])
+print(arr)
+```
+
+```{figure} excalidraw/4x3x2-array.excalidraw.png
+```
+
+Выражение состоит из двух множителей, каждый из которых готовит данные своей формы.
+Разберем его по шагам.
+
+Сначала `numpy.arange(shape[0])` создает номера будущих слоев -- одномерный массив из четырех чисел:
+```{code-cell} python
+layers = np.arange(shape[0])
+print(layers, layers.shape)
+```
+
+Запись `[:, None, None]` добавляет две новые оси длины 1.
+В индексировании `None` -- это синоним `numpy.newaxis`, который вставляет новую ось в указанную позицию.
+Форма `(4,)` превращается в `(4, 1, 1)`, то есть каждый номер становится отдельным "слоем" размера `1x1`:
+```{code-cell} python
+layers_3d = layers[:, None, None]
+print(layers_3d.shape)
+print(layers_3d)
+```
+
+Второй множитель `numpy.ones(shape[1:])` создает таблицу из единиц формы `(3, 2)`, то есть заготовку одного слоя:
+```{code-cell} python
+ones = np.ones(shape[1:])
+print(ones.shape)
+```
+
+При умножении массивы разной формы выравниваются по правому краю и растягиваются по осям длины 1.
+Этот механизм называется **broadcasting**:
+* `(4, 1, 1)` расширяется до `(4, 3, 2)`;
+* `(3, 2)` дополняется до `(1, 3, 2)` и тоже расширяется до `(4, 3, 2)`.
+
+В результате номер слоя умножается на единицы и заполняет весь слой:
+```{code-cell} python
+result = layers_3d * ones
+print(result.shape)
+print(np.array_equal(result, arr))
+```
+
+Проверим, что каждый слой заполнен своим номером:
+```{code-cell} python
+for i in range(shape[0]):
+    print(i, np.unique(arr[i]))
+```
+
+Тип результата -- `float64`, потому что `numpy.ones` по умолчанию создает вещественный массив, и при умножении целые номера приводятся к вещественным.
+
 
 ### Зашумляем изображение
 
@@ -435,8 +747,7 @@ print("без NaN:", np.all(clean[:-1] <= clean[1:]))
 Аргумент `seed` задает начальное состояние генератора, называемого также **затравкой**.
 При одном и том же значении затравки последовательность случайных чисел будет повторяться для каждого запуска сценария, что позволит каждый раз получать один и тот же результат.
 
-``` python
-import numpy as np
+```{code-cell} python
 rng = np.random.default_rng(seed=0)
 ```
 
@@ -447,7 +758,7 @@ rng = np.random.default_rng(seed=0)
 * [`random`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.random.html) -- вещественные числа, равномерно распределенные в интервале `[0, 1)`.
 
 ``` {note}
-В ранних версиях Numpy для генерации псевдослучайных чисел использовали глобальные функции [`numpy.random.normal`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html), [`np.random.seed`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.seed.html) и другие.
+В ранних версиях NumPy для генерации псевдослучайных чисел использовали глобальные функции [`numpy.random.normal`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html), [`np.random.seed`](https://numpy.org/doc/stable/reference/random/generated/numpy.random.seed.html) и другие.
 Но для нового кода рекомендуется использовать объектный интерфейс и функцию [`np.random.default_rng`](https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng).
 ```
 
@@ -457,8 +768,6 @@ rng = np.random.default_rng(seed=0)
 Для добавления шума удобно перевести массив в вещественный тип, иначе дробные значения будут отброшены при записи в целочисленный массив.
 
 ```{code-cell} python
-from sklearn.datasets import fetch_openml
-mnist = fetch_openml('mnist_784', version=1, as_frame=False, parser='liac-arff')
 X, y = mnist.data, mnist.target
 
 image_index = 0
@@ -559,7 +868,7 @@ plt.show()
 
 1. Почему библиотеку NumPy импортируют, используя псевдоним `np`?
 1. Что такое *векторизация*?
-1. Где и для чего в Numpy используют затравку?
+1. Где и для чего в NumPy используют затравку?
 1. В программе выше производительность обработки массива чисел в NumPy сравнивали относительно выражения со списковым включением.
   Попробуйте сравнить с невекторизированной формой обработки данных в массиве NumPy.
 1. Какие причины могут быть в том, чтобы зашумить изображения в наборе данных?

@@ -23,6 +23,7 @@ X, y = mnist.data, mnist.target
 
 ## Исследуем данные
 
+Визуализация произвольного образца:
 ``` {code-cell} python
 import matplotlib.pyplot as plt
 some_digit_index = 365
@@ -31,9 +32,9 @@ some_digit_image = some_digit.reshape(28, 28)
 plt.imshow(some_digit_image, cmap = 'gray_r')
 ```
 
+Визуализация десяток каждой из цифр:
 ``` {code-cell} python
 import numpy as np
-import matplotlib.pyplot as plt
 
 rows, cols = 10, 10
 fig, axes = plt.subplots(rows, cols)
@@ -49,6 +50,9 @@ for digit in range(rows):
 plt.tight_layout()
 plt.show()
 ```
+
+* Проверяем классы на сбалансированность.
+* Проверяем на перемешанность классов.
 
 
 ## Готовим обучающий набор
