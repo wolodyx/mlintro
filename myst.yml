@@ -21,6 +21,7 @@ project:
     - file: src/setup.md
     - file: src/jupyter-notebook.md
     - file: src/datasets.md
+    - file: src/stats.md
     - file: src/python.md
     - file: src/numpy.md
     - file: src/matplotlib.md
@@ -31,6 +32,7 @@ project:
     - file: src/descriptive-stats.md
     - file: src/hypotheses.md
     - file: src/iris.md
+    - file: src/housing.md
     - file: src/mnist.md
 site:
   template: book-theme
@@ -38,3 +40,11 @@ site:
   #   favicon: favicon.ico
     logo: site_logo.png
     logo_text: "Введение в машинное обучение"
+
+parse:
+  myst_enable_extensions:
+    - dollarmath
+    - linkify
+    - substitution
+    - colon_fence
+    - replacements
